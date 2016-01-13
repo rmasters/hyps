@@ -9,7 +9,6 @@
     "classnames": "^2.2.3",
     "dateformat": "^1.0.12",
     "express": "^4.13.3",
-    "extract-text-webpack-plugin": "^1.0.1",
     "react": "^0.14.6",
     "react-dom": "^0.14.6",
     "source-map-support": "^0.4.0"
@@ -23,6 +22,7 @@
     "babel-preset-react": "^6.3.13",
     "babel-preset-stage-1": "^6.3.13",
     "css-loader": "^0.23.1",
+    "extract-text-webpack-plugin": "^1.0.1",
     "json-loader": "^0.5.4",
     "postcss-cssnext": "^2.4.0",
     "postcss-discard-duplicates": "^2.0.0",
