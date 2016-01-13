@@ -1,6 +1,7 @@
 import React from 'react';
 import styles from './styles.css';
 import classnames from 'classnames';
+import dateformat from 'dateformat';
 
 let timeToNext = (start, interval) => {
     var now = new Date();
@@ -94,6 +95,7 @@ export default class Ticks extends React.Component {
 
         return (
             <div>
+            <HyperiumsTime key="hyptime" />
             {ticks}
             </div>
         );
@@ -171,5 +173,21 @@ class Tick extends React.Component {
     componentWillUnmount() {
         // @todo remove when mixins are supported in es6/react?
         this.intervals.map(clearInterval);
+    }
+}
+
+class HyperiumsTime extends Tick
+{
+    tick() {
+        this.setState({time: new Date()});
+    }
+
+    render() {
+        var time = dateformat(this.state.time, "yyyy-mm-dd hh:MM:ss");
+        return (
+            <div className={classnames(styles.tick, styles.hyperiums_time)}>
+                {time}
+            </div>
+        );
     }
 }
