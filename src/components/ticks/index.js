@@ -74,7 +74,18 @@ export default class Ticks extends React.Component {
     }
 
     render() {
-        let ticks = this.props.data.ticks.map(function(tick) {
+        let ticks = this.props.data.ticks;
+
+        ticks.sort(function(a, b) {
+            let attn = timeToNext(a.startTime, a.interval);
+            let attb = timeToNext(b.startTime, b.interval);
+
+            if (attn > attb) return 1;
+            if (attn < attb) return -1;
+            return 0;
+        });
+        
+        ticks = ticks.map(function(tick) {
             return (
                 <Tick key={tick.name} startTime={tick.startTime} interval={tick.interval} name={tick.name} />
             );
