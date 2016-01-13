@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './styles.css';
 import classnames from 'classnames';
-import dateformat from 'dateformat';
+import moment from 'moment';
 
 let timeToNext = (start, interval) => {
     var now = new Date();
@@ -183,7 +183,7 @@ class HyperiumsTime extends Tick
     }
 
     render() {
-        var time = dateformat(this.state.time, "yyyy-mm-dd hh:MM:ss");
+        var time = moment(this.state.time).format("YYYY-MM-DD HH:mm:ss");
         return (
             <div className={classnames(styles.tick, styles.hyperiums_time)}>
                 {time}
