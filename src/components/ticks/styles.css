@@ -6,11 +6,6 @@
     padding: 10px;
 }
 
-.tick:hover {
-    background: #445;
-    color: #aa9;
-}
-
 /* Within 5 minutes */
 .tick.imminent {
     background: red;
@@ -30,5 +25,6 @@
 }
 
 .tick.hyperiums_time {
+    background: #445;
     font-weight: bold;
 }

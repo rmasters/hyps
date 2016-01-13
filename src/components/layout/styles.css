@@ -1,0 +1,19 @@
+/** For scrolling on touch-devices **/
+html {
+    background: #000;
+}
+
+.hypex {
+    background: #000;
+    color: #aa7;
+    font: 1.00em Helvetica, Arial, sans-serif;
+    min-height: 100%;
+}
+
+a {
+    color: #aa7;
+}
+
+a:hover {
+    color: #dd9;
+}

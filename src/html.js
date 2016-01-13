@@ -1,3 +1,5 @@
+import styles from './styles.css';
+
 export default function (body) {
     return `
     <!doctype html>
@@ -9,7 +11,7 @@ export default function (body) {
     <link rel="stylesheet" type="text/css" href="/style.css" />
     </head>
     <body>
-    <div id="mount">${body}</div>
+    <div id="mount" class="${styles.mount}">${body}</div>
     <script type="text/javascript" src="/client.js"></script>
     </body>
     </html>
