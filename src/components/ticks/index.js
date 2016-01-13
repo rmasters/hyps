@@ -2,9 +2,10 @@ import React from 'react';
 import styles from './styles.css';
 import classnames from 'classnames';
 import moment from 'moment';
+import moment_tz from 'moment-timezone';
 
 let timeToNext = (start, interval) => {
-    var now = new Date();
+    var now = moment().tz("UTC").toDate();
     var seconds = [
         now.getHours() * 3600,
         now.getMinutes() * 60,
@@ -62,9 +63,7 @@ let RenderTimeLeft = (time) => {
 export default class Ticks extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {
-            now: new Date()
-        };
+        this.state = {now: moment().tz("UTC")};
     }
 
     componentDidMount() {
@@ -72,7 +71,7 @@ export default class Ticks extends React.Component {
     }
 
     tick() {
-        this.setState({now: new Date()});
+        this.setState({now: moment().tz("UTC")});
     }
 
     render() {
@@ -178,12 +177,17 @@ class Tick extends React.Component {
 
 class HyperiumsTime extends Tick
 {
+    constructor(props) {
+        super(props);
+        this.state = {time: moment().tz("UTC")};
+    }
+
     tick() {
-        this.setState({time: new Date()});
+        this.setState({time: moment().tz("UTC")});
     }
 
     render() {
-        var time = moment(this.state.time).format("YYYY-MM-DD HH:mm:ss");
+        var time = this.state.time.format("YYYY-MM-DD HH:mm:ss");
         return (
             <div className={classnames(styles.tick, styles.hyperiums_time)}>
                 {time}
