@@ -1,6 +1,31 @@
 .tick {
-    background: rgba(0,0,0,0.25);
+    background: #334;
+    color: #aa7;
     display: inline-block;
     margin: 0 1px;
     padding: 10px;
 }
+
+.tick:hover {
+    background: #445;
+    color: #aa9;
+}
+
+/* Within 5 minutes */
+.tick.imminent {
+    background: red;
+    color: white;
+}
+
+/* Within 15 minutes */
+.tick.soon {
+    background: orange;
+    color: black;
+}
+
+/* Within 30 minutes */
+.tick.later {
+    background: yellow;
+    color: black;
+}
+

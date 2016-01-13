@@ -1,5 +1,6 @@
 import React from 'react';
 import styles from './styles.css';
+import classnames from 'classnames';
 
 let timeToNext = (start, interval) => {
     var now = new Date();
@@ -135,9 +136,23 @@ class Tick extends React.Component {
         return timeToNext(this.props.startTime, this.props.interval);
     }
 
+    getImminencyClass() {
+        if (this.state.secondsRemaining <= 5 * 60) {
+            return styles.imminent;
+        }
+
+        if (this.state.secondsRemaining <= 15 * 60) {
+            return styles.soon;
+        }
+
+        if (this.state.secondsRemaining <= 30 * 60) {
+            return styles.later;
+        }
+    }
+
     render() {
         return (
-            <div className={styles.tick}>
+            <div className={classnames(styles.tick, this.getImminencyClass())}>
             {this.props.name}: {RenderTimeLeft(TimeLeft(this.state.secondsRemaining))}
             </div>
         );
