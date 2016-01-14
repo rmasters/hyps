@@ -4,8 +4,7 @@ import classnames from 'classnames';
 import moment from 'moment';
 import moment_tz from 'moment-timezone';
 
-let timeToNext = (start, interval) => {
-    var now = moment().tz("UTC");
+let timeToNext = (now, start, interval) => {
     var last = start;
 
     while (last.isBefore(now)) {
@@ -13,10 +12,6 @@ let timeToNext = (start, interval) => {
     }
 
     return last;
-};
-
-let RenderTimeLeft = (time) => {
-    return time.fromNow();
 };
 
 export default class Ticks extends React.Component {
@@ -44,13 +39,13 @@ export default class Ticks extends React.Component {
         let ticks = this.state.ticks;
 
         ticks.sort(function(a, b) {
-            let attn = timeToNext(a.startTime, a.interval);
-            let attb = timeToNext(b.startTime, b.interval);
+            let attn = timeToNext(this.state.now, a.startTime, a.interval);
+            let attb = timeToNext(this.state.now, b.startTime, b.interval);
 
             if (attn > attb) return 1;
             if (attn < attb) return -1;
             return 0;
-        });
+        }.bind(this));
 
         ticks = ticks.map(function(tick, i) {
             return (
@@ -89,19 +84,15 @@ class Tick extends React.Component {
     }
 
     getTickState() {
-        return {nextOccurrence: this.timeToNext()};
+        return {};
     }
 
     tick(now) {
-        this.setState({nextOccurrence: this.timeToNext()});
+        this.setState({now: now});
     }
 
-    timeToNext() {
-        return timeToNext(this.props.startTime, this.props.interval);
-    }
-
-    getImminencyClass() {
-        var seconds = this.state.nextOccurrence.diff(moment().tz("UTC"), 'seconds');
+    getImminencyClass(next) {
+        var seconds = next.diff(moment().tz("UTC"), 'seconds');
 
         if (seconds <= 5 * 60) {
             return styles.imminent;
@@ -117,9 +108,11 @@ class Tick extends React.Component {
     }
 
     render() {
+        let next = timeToNext(this.state.now, this.props.startTime, this.props.interval);
+
         return (
-            <div className={classnames(styles.tick, this.getImminencyClass())}>
-            {this.props.name}: {RenderTimeLeft(this.state.nextOccurrence)}
+            <div className={classnames(styles.tick, this.getImminencyClass(next))}>
+            {this.props.name}: {next.fromNow()}
             </div>
         );
     }
@@ -143,15 +136,11 @@ class Tick extends React.Component {
 class HyperiumsTime extends Tick
 {
     getTickState() {
-        return {time: moment().tz("UTC")};
-    }
-
-    tick(now) {
-        this.setState({time: now});
+        return {now: moment().tz("UTC")};
     }
 
     render() {
-        var time = this.state.time.format("YYYY-MM-DD HH:mm:ss");
+        var time = this.state.now.format("YYYY-MM-DD HH:mm:ss");
         return (
             <div className={classnames(styles.tick, styles.hyperiums_time)}>
                 {time}
