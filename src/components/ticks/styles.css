@@ -1,5 +1,5 @@
 .tick {
-    background: #334;
+    background: #334 linear-gradient(#445, #334);
     color: #aa7;
     display: inline-block;
     margin: 1px;
@@ -8,23 +8,24 @@
 
 /* Within 5 minutes */
 .tick.imminent {
-    background: red;
+    background: #e33 linear-gradient(#e72, #e33);
     color: white;
 }
 
 /* Within 15 minutes */
 .tick.soon {
-    background: orange;
+    background: #f85 linear-gradient(#fa5, #f85);
     color: black;
 }
 
 /* Within 30 minutes */
 .tick.later {
-    background: yellow;
+    background: #aa5 linear-gradient(#aa5, #a85);
     color: black;
 }
 
 .tick.hyperiums_time {
-    background: #445;
+    background: #aa7 linear-gradient(#ddb, #aa7);
+    color: black;
     font-weight: bold;
 }
