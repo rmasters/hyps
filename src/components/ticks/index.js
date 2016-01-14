@@ -22,21 +22,26 @@ let RenderTimeLeft = (time) => {
 export default class Ticks extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {now: moment().tz("UTC")};
+        this.state = {
+            now: moment().tz("UTC"),
+            ticks: props.data.ticks
+        };
     }
 
     componentDidMount() {
-        // disable this until we can get the re-render to trickle down to ticks
-        // they shouldn't be re-created every tick!
-        //this.setInterval(this.tick.bind(this), 1000);
+        this.setInterval(this.tick.bind(this), 1000);
     }
 
     tick() {
         this.setState({now: moment().tz("UTC")});
+
+        for (var key in this.refs) {
+            this.refs[key].tick(this.state.now);
+        }
     }
 
     render() {
-        let ticks = this.props.data.ticks;
+        let ticks = this.state.ticks;
 
         ticks.sort(function(a, b) {
             let attn = timeToNext(a.startTime, a.interval);
@@ -46,16 +51,16 @@ export default class Ticks extends React.Component {
             if (attn < attb) return -1;
             return 0;
         });
-        
-        ticks = ticks.map(function(tick) {
+
+        ticks = ticks.map(function(tick, i) {
             return (
-                <Tick key={tick.name} startTime={tick.startTime} interval={tick.interval} name={tick.name} />
+                <Tick key={tick.name} startTime={tick.startTime} interval={tick.interval} name={tick.name} ref={'tick' + i} />
             );
-        });
+        }, this);
 
         return (
             <div>
-            <HyperiumsTime key="hyptime" />
+            <HyperiumsTime key="hyptime" ref="hyptime" />
             {ticks}
             </div>
         );
@@ -87,20 +92,12 @@ class Tick extends React.Component {
         return {nextOccurrence: this.timeToNext()};
     }
 
-    componentDidMount() {
-        this.tick();
-        this.setInterval(this.tick.bind(this), 1000);
-    }
-
-    tick() {
+    tick(now) {
         this.setState({nextOccurrence: this.timeToNext()});
     }
 
     timeToNext() {
-        let next = timeToNext(this.props.startTime, this.props.interval);
-        // Less while loops next time
-        //this.props.startTime = next.subtract(this.props.interval);
-        return next;
+        return timeToNext(this.props.startTime, this.props.interval);
     }
 
     getImminencyClass() {
@@ -149,8 +146,8 @@ class HyperiumsTime extends Tick
         return {time: moment().tz("UTC")};
     }
 
-    tick() {
-        this.setState({time: moment().tz("UTC")});
+    tick(now) {
+        this.setState({time: now});
     }
 
     render() {
