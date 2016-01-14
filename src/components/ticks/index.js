@@ -44,7 +44,8 @@ export default class Ticks extends React.Component {
 
             if (attn > attb) return 1;
             if (attn < attb) return -1;
-            return 0;
+
+            return a.name.localeCompare(b.name);
         }.bind(this));
 
         ticks = ticks.map(function(tick, i) {
