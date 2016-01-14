@@ -5,59 +5,18 @@ import moment from 'moment';
 import moment_tz from 'moment-timezone';
 
 let timeToNext = (start, interval) => {
-    var now = moment().tz("UTC").toDate();
-    var seconds = [
-        now.getHours() * 3600,
-        now.getMinutes() * 60,
-        now.getSeconds()
-    ].reduce(function(pv, cv) { return pv + cv; })
-
+    var now = moment().tz("UTC");
     var last = start;
-    while (last + interval < seconds) {
-        last += interval;
+
+    while (last.isBefore(now)) {
+        last.add(interval);
     }
 
-    return (last + interval) - seconds;
-};
-
-let TimeLeft = (seconds) => {
-    var time = {
-        h: 0,
-        m: 0,
-        s: 0
-    };
-
-    if (seconds > 3600) {
-        time.h = Math.floor(seconds / 3600);
-        seconds -= time.h * 3600;
-    }
-
-    if (seconds > 60) {
-        time.m = Math.floor(seconds / 60);
-        seconds -= time.m * 60;
-    }
-
-    time.s = seconds;
-
-    return time;
+    return last;
 };
 
 let RenderTimeLeft = (time) => {
-    var output = [];
-    if (time.h > 0) {
-        output.push(time.h + "h");
-    }
-    if (time.h > 0 || time.m > 0) {
-        output.push(time.m + "m");
-    }
-    if (time.h > 0 || time.m > 0 || time.s > 0) {
-        output.push(time.s + "s");
-    }
-    if (time.h + time.m + time.s <= 0) {
-        output.push("Now");
-    }
-
-    return output.join(" ");
+    return time.fromNow();
 };
 
 export default class Ticks extends React.Component {
@@ -67,7 +26,9 @@ export default class Ticks extends React.Component {
     }
 
     componentDidMount() {
-        this.setInterval(this.tick.bind(this), 1000);
+        // disable this until we can get the re-render to trickle down to ticks
+        // they shouldn't be re-created every tick!
+        //this.setInterval(this.tick.bind(this), 1000);
     }
 
     tick() {
@@ -119,7 +80,11 @@ export default class Ticks extends React.Component {
 class Tick extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {};
+        this.state = this.getTickState();
+    }
+
+    getTickState() {
+        return {nextOccurrence: this.timeToNext()};
     }
 
     componentDidMount() {
@@ -128,25 +93,28 @@ class Tick extends React.Component {
     }
 
     tick() {
-        this.setState({
-            secondsRemaining: this.timeToNext()
-        });
+        this.setState({nextOccurrence: this.timeToNext()});
     }
 
     timeToNext() {
-        return timeToNext(this.props.startTime, this.props.interval);
+        let next = timeToNext(this.props.startTime, this.props.interval);
+        // Less while loops next time
+        //this.props.startTime = next.subtract(this.props.interval);
+        return next;
     }
 
     getImminencyClass() {
-        if (this.state.secondsRemaining <= 5 * 60) {
+        var seconds = this.state.nextOccurrence.diff(moment().tz("UTC"), 'seconds');
+
+        if (seconds <= 5 * 60) {
             return styles.imminent;
         }
 
-        if (this.state.secondsRemaining <= 15 * 60) {
+        if (seconds <= 15 * 60) {
             return styles.soon;
         }
 
-        if (this.state.secondsRemaining <= 30 * 60) {
+        if (seconds <= 30 * 60) {
             return styles.later;
         }
     }
@@ -154,7 +122,7 @@ class Tick extends React.Component {
     render() {
         return (
             <div className={classnames(styles.tick, this.getImminencyClass())}>
-            {this.props.name}: {RenderTimeLeft(TimeLeft(this.state.secondsRemaining))}
+            {this.props.name}: {RenderTimeLeft(this.state.nextOccurrence)}
             </div>
         );
     }
@@ -177,9 +145,8 @@ class Tick extends React.Component {
 
 class HyperiumsTime extends Tick
 {
-    constructor(props) {
-        super(props);
-        this.state = {time: moment().tz("UTC")};
+    getTickState() {
+        return {time: moment().tz("UTC")};
     }
 
     tick() {

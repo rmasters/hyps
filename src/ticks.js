@@ -1,10 +1,13 @@
 let tick = (name, startTime, intervalHours) => {
     return {
         name: name,
-        startTime: (startTime[0] * 3600) + (startTime[1] * 60) + startTime[2],
-        interval: 3600 * intervalHours
+        startTime: moment().tz("UTC").hour(startTime[0]).minute(startTime[1]).second(startTime[2]),
+        interval: moment.duration(intervalHours, 'hours')
     };
 };
+
+import moment from 'moment';
+import moment_tz from 'moment-timezone';
 
 export default {
     round: 6,
